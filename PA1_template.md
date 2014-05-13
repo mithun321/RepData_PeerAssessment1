@@ -2,7 +2,7 @@
 
 
 ## Loading and preprocessing the data
-Date is loaded using read.csv() and then date is trasferred into date object in R.
+Data is loaded using *read.csv()* and then date is trasferred into *date* object in R.
 
 
 ```r
@@ -28,12 +28,13 @@ head(data)
 
 
 ## What is mean total number of steps taken per day?
-To answer this question we create a aggregate table first.
+To answer this question I have created a aggregate table first.
 
 
 ```r
 
 aggdata = aggregate(data$steps, by = list(data$date), FUN = sum)
+ag = aggdata
 ```
 
 Let us now see how this new table looks like.
@@ -52,7 +53,7 @@ head(aggdata)
 ## 6 2012-10-06 15420
 ```
 
-We now create the histogram ignoring the missing values.
+I have now created the histogram ignoring the missing values.
 
 
 ```r
@@ -62,7 +63,7 @@ hist(aggdata$x[!is.na(aggdata$x)], col = "skyblue", breaks = 10, main = "Total n
 
 ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
 
-We now calculate the *mean* and *median* total number of steps taken per day.
+We can now calculate the *mean* and *median* total number of steps taken per day.
 
 ```r
 paste("Mean total number of steps taken per day:", mean(aggdata$x, na.rm = TRUE))
@@ -82,7 +83,7 @@ paste("Median total number of steps taken per day:", median(aggdata$x, na.rm = T
 ```
 
 ## What is the average daily activity pattern?
-To answer this question I have first constructed the table with average number of steps in different 5 minutes interval. 
+To answer this question I have first constructed the table with average number of steps in different 5-minute intervals. 
 
 
 ```r
@@ -110,7 +111,7 @@ plot(aggdata$interval, aggdata$avgsteps, type = "l", lwd = 2, main = "Time serie
 
 ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
 
-To find the 5-minute interval, which on average contains the maximum number of steps, we have sorted the above data in decreasing order of average steps. After that it is easy to check the interval with maximum average number of steps.
+To find the 5-minute interval, which on average contains the maximum number of steps, I have sorted the above data in decreasing order of average steps. After that it is easy to find the interval with maximum average number of steps.
 
 
 ```r
@@ -140,6 +141,7 @@ paste("The 5-minute interval, which on average across all the days in the datase
 
 
 ## Imputing missing values
+In this section, I have first counted the missing values.
 
 ```r
 paste("Total mnumber of rows with missing value:", sum(is.na(data$steps)))
@@ -149,8 +151,10 @@ paste("Total mnumber of rows with missing value:", sum(is.na(data$steps)))
 ## [1] "Total mnumber of rows with missing value: 2304"
 ```
 
-```r
+After that I have taken a backup of original data set and replaced all the missing values in the back up data set by the mean steps for corresponding 5-minute intervals. The new data set with this modified values is named as *data2*.
 
+
+```r
 data2 = data
 for (i in 1:length(aggdata[[1]])) {
     place = is.na(data2$steps) & (data2$interval == aggdata$interval[i])
@@ -171,25 +175,14 @@ head(data2)
 ```
 
 
-We now calculate the aggregate once again with this modified data.
+We can now calculate the aggregate once again with this modified data.
 
 ```r
 
 aggdata2 = aggregate(data2$steps, by = list(data2$date), FUN = sum)
-head(aggdata2)
 ```
 
-```
-##      Group.1     x
-## 1 2012-10-01 10766
-## 2 2012-10-02   126
-## 3 2012-10-03 11352
-## 4 2012-10-04 12116
-## 5 2012-10-05 13294
-## 6 2012-10-06 15420
-```
-
-We now create the histogram after replacing the missing values.
+We cal also create the histogram after replacing the missing values.
 
 
 ```r
@@ -197,9 +190,9 @@ hist(aggdata2$x, col = "blue", breaks = 10, main = "Total number of steps taken 
     xlab = "Number of steps")
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13.png) 
 
-We also re-calculate the *mean* and *median* total number of steps taken per day.
+I have also re-calculated the *mean* and *median* total number of steps taken per day.
 
 ```r
 paste("Mean total number of steps taken per day:", mean(aggdata2$x))
@@ -218,8 +211,57 @@ paste("Median total number of steps taken per day:", median(aggdata2$x))
 ## [1] "Median total number of steps taken per day: 10766.1886792453"
 ```
 
+We can see that mean is same as previous, but median is changed. Now both the mean and meadian values are same. 
+
+```r
+print("Old total daily number of steps:")
+```
+
+```
+## [1] "Old total daily number of steps:"
+```
+
+```r
+head(ag)
+```
+
+```
+##      Group.1     x
+## 1 2012-10-01    NA
+## 2 2012-10-02   126
+## 3 2012-10-03 11352
+## 4 2012-10-04 12116
+## 5 2012-10-05 13294
+## 6 2012-10-06 15420
+```
+
+```r
+print("New total daily number of steps:")
+```
+
+```
+## [1] "New total daily number of steps:"
+```
+
+```r
+head(aggdata2)
+```
+
+```
+##      Group.1     x
+## 1 2012-10-01 10766
+## 2 2012-10-02   126
+## 3 2012-10-03 11352
+## 4 2012-10-04 12116
+## 5 2012-10-05 13294
+## 6 2012-10-06 15420
+```
+
+If we consider total daily number of steps as above, we can see that totals with modified data is same except when the data was missing. Missing values are now replaced by total mean that we have just seen above. 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+To answer this question, I have first created a new factor variable with two levels – "weekday" and "weekend", indicating whether a given date is a weekday or weekend day. I have then added this new factor variable as a seperate column in the original data.
 
 
 ```r
@@ -241,6 +283,9 @@ head(data)
 ## 6    NA 2012-10-01       25 weekday
 ```
 
+After that I have constructed two tables, one for weekday and one for weekend, with average number of steps in different 5-minute intervals. Next, we have created the required panel plot.
+
+
 ```r
 weekdaydata = data[data$days == "weekday", ]
 weekdaydata = aggregate(weekdaydata$steps, by = list(weekdaydata$interval), 
@@ -256,14 +301,14 @@ plot(weekdaydata$Group.1, weekdaydata$x, type = "l", lwd = 2, main = "Weekday Ti
     xlab = "Interval", col = 4, ylab = "Number of steps")
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
+![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17.png) 
 
 ```r
 par(mfrow = c(1, 1))
 ```
 
 
-Now the same panel plots are constructed using Lattice package.
+Now the same panel plot is constructed using Lattice package.
 
 ```r
 library(lattice)
@@ -275,5 +320,5 @@ xyplot(steps ~ interval | days, data = final, layout = c(1, 2), type = "l",
     xlab = "Interval", ylab = "Number pf steps", lwd = 2)
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15.png) 
+![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18.png) 
 
