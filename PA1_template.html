@@ -290,11 +290,11 @@ head(aggdata)
 </code></pre>
 
 <pre><code class="r">maxinterval = aggdata$interval[order(aggdata$avgsteps, decreasing = TRUE)][1]
-paste(&quot;The 5-minute interval, which on average across all the days in the dataset, contains the maximum number of steps:&quot;, 
+paste(&quot;5-minute interval containing the maximum number of steps on average:&quot;, 
     maxinterval)
 </code></pre>
 
-<pre><code>## [1] &quot;The 5-minute interval, which on average across all the days in the dataset, contains the maximum number of steps: 835&quot;
+<pre><code>## [1] &quot;5-minute interval containing the maximum number of steps on average: 835&quot;
 </code></pre>
 
 <h2>Imputing missing values</h2>

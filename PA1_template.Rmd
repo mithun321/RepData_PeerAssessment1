@@ -32,7 +32,8 @@ head(aggdata)
 I have now created the histogram ignoring the missing values.
 
 ```{r echo = TRUE, fig.width= 10}
-hist(aggdata$x[!is.na(aggdata$x)], col = "skyblue", breaks = 10,
+hist(aggdata$x[!is.na(aggdata$x)], 
+     col = "skyblue", breaks = 10,
      main = "Total number of steps taken each day",
      xlab = "Number of steps")
 
@@ -65,8 +66,7 @@ To find the 5-minute interval, which on average contains the maximum number of s
 ```{r echo = TRUE, fig.width= 10}
 head(aggdata[order(aggdata$avgsteps, decreasing = TRUE),])
 maxinterval = aggdata$interval[order(aggdata$avgsteps, decreasing = TRUE)][1]
-paste("The 5-minute interval, which on average across all the days in the dataset, contains the maximum number of steps:",
-      maxinterval)
+paste("5-minute interval containing the maximum number of steps on average:", maxinterval)
 
 ```
 

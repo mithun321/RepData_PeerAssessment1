@@ -130,12 +130,12 @@ head(aggdata[order(aggdata$avgsteps, decreasing = TRUE), ])
 
 ```r
 maxinterval = aggdata$interval[order(aggdata$avgsteps, decreasing = TRUE)][1]
-paste("The 5-minute interval, which on average across all the days in the dataset, contains the maximum number of steps:", 
+paste("5-minute interval containing the maximum number of steps on average:", 
     maxinterval)
 ```
 
 ```
-## [1] "The 5-minute interval, which on average across all the days in the dataset, contains the maximum number of steps: 835"
+## [1] "5-minute interval containing the maximum number of steps on average: 835"
 ```
 
 
