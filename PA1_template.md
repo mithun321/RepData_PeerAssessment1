@@ -57,7 +57,8 @@ I have now created the histogram ignoring the missing values.
 
 
 ```r
-hist(aggdata$x[!is.na(aggdata$x)], col = "skyblue", breaks = 10, main = "Total number of steps taken each day", 
+msg = "Total number of steps taken each day"
+hist(aggdata$x[!is.na(aggdata$x)], col = "skyblue", breaks = 10, main = msg, 
     xlab = "Number of steps")
 ```
 

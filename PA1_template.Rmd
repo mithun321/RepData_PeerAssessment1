@@ -32,9 +32,10 @@ head(aggdata)
 I have now created the histogram ignoring the missing values.
 
 ```{r echo = TRUE, fig.width= 10}
+msg = "Total number of steps taken each day"
 hist(aggdata$x[!is.na(aggdata$x)], 
      col = "skyblue", breaks = 10,
-     main = "Total number of steps taken each day",
+     main = msg,
      xlab = "Number of steps")
 
 ```

@@ -228,7 +228,8 @@ ag = aggdata
 
 <p>I have now created the histogram ignoring the missing values.</p>
 
-<pre><code class="r">hist(aggdata$x[!is.na(aggdata$x)], col = &quot;skyblue&quot;, breaks = 10, main = &quot;Total number of steps taken each day&quot;, 
+<pre><code class="r">msg = &quot;Total number of steps taken each day&quot;
+hist(aggdata$x[!is.na(aggdata$x)], col = &quot;skyblue&quot;, breaks = 10, main = msg, 
     xlab = &quot;Number of steps&quot;)
 </code></pre>
 
