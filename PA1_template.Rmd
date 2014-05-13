@@ -2,19 +2,144 @@
 
 
 ## Loading and preprocessing the data
+Date is loaded using read.csv() and then date is trasferred into date object in R.
 
+```{r echo = TRUE}
+data = read.csv("activity.csv")
+data$date = as.Date(data$date)
 
+```
+Let us look into first few rows:
+```{r echo = TRUE}
+head(data)
+
+```
 
 ## What is mean total number of steps taken per day?
+To answer this question we create a aggregate table first.
 
+```{r echo = TRUE}
 
+aggdata = aggregate(data$steps,by = list(data$date), 
+              FUN = sum) 
+```
+Let us now see how this new table looks like.
+```{r echo = TRUE}
+head(aggdata)
 
+```
+We now create the histogram ignoring the missing values.
+
+```{r echo = TRUE, fig.width= 10}
+hist(aggdata$x[!is.na(aggdata$x)], col = "skyblue", breaks = 10,
+     main = "Total number of steps taken each day",
+     xlab = "Number of steps")
+
+```
+We now calculate the *mean* and *median* total number of steps taken per day.
+```{r echo = TRUE}
+paste("Mean total number of steps taken per day:", 
+      mean(aggdata$x, na.rm = TRUE))
+
+paste("Median total number of steps taken per day:",
+      median(aggdata$x, na.rm = TRUE))
+```
 ## What is the average daily activity pattern?
+To answer this question I have first constructed the table with average number of steps in different 5 minutes interval. 
 
+```{r echo = TRUE, fig.width= 10}
+aggdata = aggregate(data$steps,by = list(data$interval), 
+              FUN = mean, na.rm = TRUE) 
+names(aggdata) = c("interval", "avgsteps")
+head(aggdata)
+```
+Now we can plot the time series.
+```{r echo = TRUE, fig.width= 10}
+plot(aggdata$interval, aggdata$avgsteps, type = "l", lwd = 2,
+     main = "Time series plot", xlab = "Interval", col = 4,
+     ylab = "Average number of steps")
+```
+To find the 5-minute interval, which on average contains the maximum number of steps, we have sorted the above data in decreasing order of average steps. After that it is easy to check the interval with maximum average number of steps.
+
+```{r echo = TRUE, fig.width= 10}
+head(aggdata[order(aggdata$avgsteps, decreasing = TRUE),])
+maxinterval = aggdata$interval[order(aggdata$avgsteps, decreasing = TRUE)][1]
+paste("The 5-minute interval, which on average across all the days in the dataset, contains the maximum number of steps:",
+      maxinterval)
+
+```
 
 
 ## Imputing missing values
+```{r echo = TRUE, fig.width= 10}
+paste("Total mnumber of rows with missing value:", sum(is.na(data$steps)))
 
+data2 = data
+for(i in 1:length(aggdata[[1]])){
+  place = is.na(data2$steps) & (data2$interval == aggdata$interval[i])
+  data2$steps[place] = aggdata$avgsteps[i]
+}
 
+head(data2)
+```
+
+We now calculate the aggregate once again with this modified data.
+```{r echo = TRUE, fig.width= 10}
+
+aggdata2 = aggregate(data2$steps,by = list(data2$date), 
+              FUN = sum) 
+head(aggdata2)
+```
+We now create the histogram after replacing the missing values.
+
+```{r echo = TRUE, fig.width= 10}
+hist(aggdata2$x, col = "blue", breaks = 10,
+     main = "Total number of steps taken each day",
+     xlab = "Number of steps")
+
+```
+We also re-calculate the *mean* and *median* total number of steps taken per day.
+```{r echo = TRUE}
+paste("Mean total number of steps taken per day:", 
+      mean(aggdata2$x))
+
+paste("Median total number of steps taken per day:",
+      median(aggdata2$x))
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+```{r echo = TRUE, fig.width= 10}
+days = rep("weekday", length(data[[1]]))
+place = (weekdays(data$date) == "Sunday") | (weekdays(data$date) == "Saturday")
+days[place] = "weekend"
+days = as.factor(days)
+data$days = days
+head(data)
+weekdaydata = data[data$days == "weekday",]
+weekdaydata = aggregate(weekdaydata$steps,by = list(weekdaydata$interval), 
+              FUN = mean, na.rm = TRUE)
+weekenddata = data[data$days == "weekend",]
+weekenddata = aggregate(weekenddata$steps,by = list(weekenddata$interval), 
+              FUN = mean, na.rm = TRUE) 
+
+par(mfrow = c(2,1))
+plot(weekenddata$Group.1, weekenddata$x, type = "l", lwd = 2,
+     main = "Weekend Time series plot", xlab = "Interval", col = 4,
+     ylab = "Number of steps")
+plot(weekdaydata$Group.1, weekdaydata$x, type = "l", lwd = 2,
+     main = "Weekday Time series plot", xlab = "Interval", col = 4,
+     ylab = "Number of steps")
+par(mfrow = c(1,1))
+```
+
+Now the same panel plots are constructed using Lattice package.
+```{r echo = TRUE, fig.width= 10}
+library(lattice)
+weekenddata$days = "weekend"
+weekdaydata$days = "weekday"
+final = rbind(weekdaydata, weekenddata)
+names(final) = c("interval", "steps", "days")
+xyplot(steps~interval|days, data = final, layout = c(1,2), type = "l",
+       xlab = "Interval", ylab = "Number pf steps", lwd = 2)
+```
